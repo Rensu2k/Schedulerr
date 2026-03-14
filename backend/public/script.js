@@ -46,21 +46,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    prevMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-    });
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
 
-    nextMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-    });
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
 
-    eventForm.addEventListener('submit', handleEventSubmit);
+    if (eventForm) {
+        eventForm.addEventListener('submit', handleEventSubmit);
+    }
 
-    searchInput.addEventListener('input', () => {
-        renderEventList();
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            renderEventList();
+        });
+    }
 
     if (filterTimeDropdown) {
         filterTimeDropdown.addEventListener('change', () => {
@@ -95,14 +103,105 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.classList.toggle('active');
     };
 
-    hamburgerMenu.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleSidebar();
-    });
+    if (hamburgerMenu) {
+        hamburgerMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+    }
 
     const btnAddSchedule = document.getElementById('btn-add-schedule');
     if (btnAddSchedule) {
         btnAddSchedule.addEventListener('click', () => openModal('add'));
+    }
+
+    // Create Summary Dropdown Logic
+    const btnCreateSummary = document.getElementById('btn-create-summary');
+    const summaryDropdownMenu = document.getElementById('summary-dropdown-menu');
+    
+    if (btnCreateSummary && summaryDropdownMenu) {
+        btnCreateSummary.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log('Create Summary button clicked');
+            summaryDropdownMenu.style.display = summaryDropdownMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Handle month selection
+        summaryDropdownMenu.querySelectorAll('.summary-month-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const month = option.getAttribute('data-month');
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                   'July', 'August', 'September', 'October', 'November', 'December'];
+                const selectedMonthName = month === 'all' ? 'All Year' : monthNames[parseInt(month)];
+                
+                console.log('Exporting schedule for:', selectedMonthName, 'Month value:', month);
+                
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Generating Excel...',
+                    text: `Preparing ${selectedMonthName} schedule summary`,
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+                
+                // Submit form to download Excel
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/export-summary';
+                
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '_token';
+                tokenInput.value = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                
+                const monthInput = document.createElement('input');
+                monthInput.type = 'hidden';
+                monthInput.name = 'month';
+                monthInput.value = month;
+                
+                const yearInput = document.createElement('input');
+                yearInput.type = 'hidden';
+                yearInput.name = 'year';
+                yearInput.value = new Date().getFullYear();
+                
+                form.appendChild(tokenInput);
+                form.appendChild(monthInput);
+                form.appendChild(yearInput);
+                document.body.appendChild(form);
+                
+                console.log('Submitting form to:', form.action, 'with month:', month, 'year:', yearInput.value);
+                
+                // Close dropdown
+                summaryDropdownMenu.style.display = 'none';
+                
+                // Submit form
+                form.submit();
+                document.body.removeChild(form);
+                
+                // Close loading alert after download starts
+                setTimeout(() => {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Download Started!',
+                        text: `Your ${selectedMonthName} schedule summary is being downloaded.`,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                }, 1000);
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            if (summaryDropdownMenu) {
+                summaryDropdownMenu.style.display = 'none';
+            }
+        });
     }
 
     // Profile Dropdown Logic
@@ -124,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close sidebar on outside click
     document.addEventListener('click', (e) => {
-        if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== hamburgerMenu) {
+        if (sidebar && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== hamburgerMenu) {
             sidebar.classList.remove('active');
         }
     });
@@ -473,6 +572,7 @@ function getColorByDate(dateStr, status, endDateStr) {
 }
 
 function renderCalendar() {
+    if (!calendarGrid) return; // Not on a page with a calendar
     calendarGrid.innerHTML = '';
 
     const year = currentDate.getFullYear();
@@ -1093,10 +1193,11 @@ function openViewModal(eventId, dateContext) {
     if (descCon && descEl) {
         if (effDescription && String(effDescription).trim() !== '') {
             descEl.textContent = effDescription;
-            descCon.style.display = 'block';
+            descEl.style.display = 'block';
         } else {
-            descCon.style.display = 'none';
+            descEl.style.display = 'none';
         }
+        descCon.style.display = 'block'; // Always show container
     }
     const detailsInput = document.getElementById('view-details-input');
     if (detailsInput) detailsInput.value = currentViewOriginal.details || '';

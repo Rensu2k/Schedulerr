@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -12,22 +14,27 @@ class LoginController extends Controller
         if (session('user_id')) {
             return redirect()->route('dashboard');
         }
-        return view('login');
+        $email = old('email', session('user_email', ''));
+        return view('login', compact('email'));
     }
 
     public function handleLogin(Request $request)
     {
-        $username = $request->input('username', '');
+        $email = $request->input('email', '');
         $password = $request->input('password', '');
 
-        if (!empty($username) && !empty($password)) {
-            // Simple mock login (same logic as original login.php)
-            session(['user_id' => 1, 'user_name' => $username]);
-            return redirect()->route('dashboard');
+        if (!empty($email) && !empty($password)) {
+            $user = User::where('email', $email)->first();
+            if ($user && Hash::check($password, $user->password)) {
+                session(['user_id' => $user->id, 'user_name' => $user->full_name ?? $user->name ?? 'User', 'user_email' => $user->email]);
+                return redirect()->route('dashboard');
+            }
+            return redirect()->route('login')
+                ->with('error', 'Invalid email or password.');
         }
 
         return redirect()->route('login')
-            ->with('error', 'Please enter both username and password.');
+            ->with('error', 'Please enter both email and password.');
     }
 
     public function logout(Request $request)

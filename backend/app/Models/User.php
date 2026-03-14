@@ -18,9 +18,10 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'full_name',
         'email',
         'password',
+        'profile_picture',
     ];
 
     /**
@@ -44,5 +45,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Display name for header and profile (full_name or legacy name/username).
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        if (!empty($this->attributes['full_name'] ?? null)) {
+            return $this->attributes['full_name'];
+        }
+        if (!empty($this->attributes['username'] ?? null)) {
+            return $this->attributes['username'];
+        }
+        if (!empty($this->attributes['name'] ?? null)) {
+            return $this->attributes['name'];
+        }
+        return 'User';
     }
 }

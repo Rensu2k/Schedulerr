@@ -299,6 +299,19 @@
         flex-shrink: 0;
         margin-left: 12px;
     }
+
+    /* Summary Dropdown Menu */
+    .summary-month-option {
+        padding: 12px 16px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-main);
+        transition: background 0.15s;
+    }
+    .summary-month-option:hover {
+        background: #f1f5f9;
+    }
 </style>
 @endpush
 
@@ -356,7 +369,7 @@
 
                 <div class="sidebar-divider"></div>
                 
-                <h4 style="margin: 20px 0 10px; color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Schedules</h4>
+                <h4 style="margin: 10px 0 10px 10px; color: var(--text-muted); font-size: 12px; text-transform: uppercase;">Schedules</h4>
                 <div class="agenda-scroll-container sidebar-list" id="event-list-container">
                     <!-- Event rows injected via JS -->
                 </div>
@@ -373,16 +386,49 @@
                 </div>
                 
                 <div style="display: flex; align-items: center; gap: 20px;">
+                    <!-- Create Summary Dropdown -->
+                    <div class="dropdown" style="position: relative;">
+                        <button class="btn btn-primary" id="btn-create-summary" style="display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            Create Summary
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div id="summary-dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; margin-top: 8px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); min-width: 200px; z-index: 1000; overflow: hidden;">
+                            <div style="padding: 12px 16px; font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid #e2e8f0;">Select Period</div>
+                            <div class="summary-month-option" data-month="0">January</div>
+                            <div class="summary-month-option" data-month="1">February</div>
+                            <div class="summary-month-option" data-month="2">March</div>
+                            <div class="summary-month-option" data-month="3">April</div>
+                            <div class="summary-month-option" data-month="4">May</div>
+                            <div class="summary-month-option" data-month="5">June</div>
+                            <div class="summary-month-option" data-month="6">July</div>
+                            <div class="summary-month-option" data-month="7">August</div>
+                            <div class="summary-month-option" data-month="8">September</div>
+                            <div class="summary-month-option" data-month="9">October</div>
+                            <div class="summary-month-option" data-month="10">November</div>
+                            <div class="summary-month-option" data-month="11">December</div>
+                            <div style="border-top: 2px solid #e2e8f0;"></div>
+                            <div class="summary-month-option" data-month="all" style="font-weight: 700; color: var(--primary-blue);">All Year</div>
+                        </div>
+                    </div>
+                    
                     <button class="btn btn-primary" id="btn-add-schedule">+ Add New Schedule</button>
                     
                     <div class="profile-container">
                         <button class="profile-btn" id="profile-btn">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            @if($user->profile_picture)
+                                <img src="{{ asset('storage/profile_pictures/' . $user->profile_picture) }}" alt="Profile" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                            @else
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            @endif
                         </button>
                         <div class="profile-dropdown" id="profile-dropdown">
+                            <div style="padding: 10px; font-weight: bold; color: var(--text-main); border-bottom: 1px solid #e0e0e0;">{{ $user->display_name }}</div>
+                            <a href="{{ route('profile') }}" style="display: block; padding: 10px; color: var(--text-main); text-decoration: none;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'">My Profile</a>
+                            <div style="height: 1px; background: #e0e0e0; margin: 5px 0;"></div>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="dropdown-logout-btn">
+                                <button type="submit" class="dropdown-logout-btn" style="width: 100%; border: none; background: transparent; padding: 10px; cursor: pointer; text-align: left;">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                                     <span>Logout</span>
                                 </button>
@@ -608,11 +654,11 @@
                 </div>
             </div>
             
-            <div style="margin-bottom: 25px; position: relative; background: #f8fafc; padding: 20px; border-radius: var(--border-radius-md); border: 2px solid #e2e8f0; display: none;" id="view-desc-container">
+            <div style="margin-bottom: 25px; position: relative; background: #f8fafc; padding: 20px; border-radius: var(--border-radius-md); border: 2px solid #e2e8f0;" id="view-desc-container">
                 <div style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-bottom: 8px;">Details</div>
                 <p id="view-desc" style="color: var(--text-main); font-size: 18px; white-space: pre-wrap; line-height: 1.6;"></p>
                 <textarea id="view-details-input" rows="4" style="display:none; width:100%; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 12px; background:#fff; font-size: 16px; line-height: 1.6;"></textarea>
-                <button type="button" class="view-inline-edit-btn" data-field="details" aria-label="Edit details" style="display:none; position:absolute; right: 14px; margin-top: -42px; background:transparent; border:none; cursor:pointer; padding:6px;">
+                <button type="button" class="view-inline-edit-btn" data-field="details" aria-label="Edit details" style="position:absolute; right: 14px; top: 14px; background:transparent; border:none; cursor:pointer; padding:6px;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>
                 </button>
                 <div id="view-details-actions" style="display:none; justify-content:flex-end; gap:10px; margin-top:10px;">
