@@ -245,7 +245,8 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 48px;
-    color: #ffffff; /* White checkmark */
+    color: #ffffff;
+    /* White checkmark */
     font-weight: 900;
     pointer-events: none;
     opacity: 0;
@@ -286,13 +287,14 @@ body {
     pointer-events: none;
 }
 
-.calendar-day.past-no-finish > * {
+.calendar-day.past-no-finish>* {
     position: relative;
     z-index: 1;
 }
 
 .calendar-day.finished-day:hover {
-    background: rgba(187, 247, 208, 0.9) !important; /* light green */
+    background: rgba(187, 247, 208, 0.9) !important;
+    /* light green */
 }
 
 .chip {
@@ -310,9 +312,42 @@ body {
     color: var(--text-muted);
 }
 
-.chip[data-status="upcoming"].active { background: #fef08a; color: #854d0e; border-color: #eab308; }
-.chip[data-status="completed"].active { background: #bbf7d0; color: #166534; border-color: #22c55e; }
-.chip[data-status="cancelled"].active { background: #fecaca; color: #991b1b; border-color: #ef4444; }
+.chip[data-status="upcoming"].active {
+    background: #fef08a;
+    color: #854d0e;
+    border-color: #eab308;
+}
+
+.chip[data-status="completed"].active {
+    background: #bbf7d0;
+    color: #166534;
+    border-color: #22c55e;
+}
+
+.sidebar-chips {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.sidebar-month-filter {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    background-color: white;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.sidebar-month-filter:focus {
+    border-color: var(--primary-blue);
+}
 
 .chip:hover:not(.active) {
     background: #e2e8f0;
@@ -328,11 +363,28 @@ body {
     border-radius: 4px 0 0 4px;
 }
 
-.status-green { background: #22c55e; }
-.status-yellow { background: #eab308; }
-.status-red { background: #ef4444; }
-.status-blue { background: #3b82f6; } /* Ongoing */
-.status-gray { background: #64748b; } /* Finished */
+.status-green {
+    background: #22c55e;
+}
+
+.status-yellow {
+    background: #eab308;
+}
+
+.status-red {
+    background: #ef4444;
+}
+
+.status-blue {
+    background: #3b82f6;
+}
+
+/* Ongoing */
+.status-gray {
+    background: #64748b;
+}
+
+/* Finished */
 
 .event-title-cancelled {
     text-decoration: line-through;
@@ -352,10 +404,27 @@ body {
     right: 15px;
 }
 
-.pill-upcoming { background: #fef08a; color: #854d0e; }
-.pill-completed { background: #e2e8f0; color: #475569; } /* Gray for finished */
-.pill-ongoing { background: #bfdbfe; color: #1e3a8a; } /* Blue for ongoing */
-.pill-cancelled { background: #fecaca; color: #991b1b; }
+.pill-upcoming {
+    background: #fef08a;
+    color: #854d0e;
+}
+
+.pill-completed {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* Gray for finished */
+.pill-ongoing {
+    background: #bfdbfe;
+    color: #1e3a8a;
+}
+
+/* Blue for ongoing */
+.pill-cancelled {
+    background: #fecaca;
+    color: #991b1b;
+}
 
 /* Badges for Modals */
 .status-badge {
@@ -478,7 +547,7 @@ body {
 .sidebar-main {
     width: 380px;
     height: 100vh;
-    background: white;
+    background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
     z-index: 100;
     margin-left: -380px;
@@ -503,7 +572,8 @@ body {
 }
 
 .dashboard-header {
-    height: 60px; /* Smaller header */
+    height: 60px;
+    /* Smaller header */
     padding: 0 40px;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
@@ -562,7 +632,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    min-height: 0; 
+    min-height: 0;
 }
 
 .calendar-header-actions {
@@ -662,12 +732,14 @@ body {
 }
 
 /* Time Picker refinement */
-select#event-time, select#edit-event-time {
-    height: 32px;
-    padding: 0 10px;
+select#event-time,
+select#edit-event-time {
+    height: 42px; /* Increased height for larger font */
+    padding: 0 15px;
     border-radius: 10px;
     border: 1px solid #e2e8f0;
-    font-size: 12px;
+    font-size: 16px; /* Increased from 12px */
+    font-weight: 600;
     background-color: white;
     /* Dropdown direction hints for browser */
     appearance: none;
@@ -701,7 +773,7 @@ select#event-time, select#edit-event-time {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-muted);
     margin-bottom: 8px;
@@ -713,11 +785,25 @@ select#event-time, select#edit-event-time {
     border-radius: 3px;
 }
 
-.legend-color.green { background: #22c55e; }
-.legend-color.yellow { background: #eab308; }
-.legend-color.red { background: #ef4444; }
-.legend-color.blue { background: #3b82f6; }
-.legend-color.gray { background: #64748b; }
+.legend-color.green {
+    background: #22c55e;
+}
+
+.legend-color.yellow {
+    background: #eab308;
+}
+
+.legend-color.red {
+    background: #ef4444;
+}
+
+.legend-color.blue {
+    background: #3b82f6;
+}
+
+.legend-color.gray {
+    background: #64748b;
+}
 
 /* Sidebar Components update */
 .sidebar-input {
@@ -746,22 +832,87 @@ select#event-time, select#edit-event-time {
     cursor: pointer;
 }
 
-.sidebar-list {
-    max-height: none;
+/* Profile Dropdown Styling */
+.profile-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.profile-btn:hover {
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    width: 200px;
+    background: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-dropdown.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.dropdown-logout-btn {
+    width: 100%;
+    padding: 10px 15px;
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-logout-btn:hover {
+    background: #fecaca;
 }
 
 .sidebar-footer {
-    padding-top: 20px;
-    border-top: 1px solid rgba(226, 232, 240, 0.5);
+    display: none; /* Hidden as per move to header */
 }
 
 
 .dashboard-wrapper {
-    display: none; /* Removed based on new structure */
+    display: none;
+    /* Removed based on new structure */
 }
 
 /* Reminder Alert */
 .reminder-alert {
+    display: none !important; /* Hidden for now */
     position: fixed;
     top: 90px;
     left: 50%;
@@ -797,8 +948,10 @@ select#event-time, select#edit-event-time {
 .reminder-icon {
     width: 50px;
     height: 50px;
-    background: rgba(239, 68, 68, 0.12) !important; /* Red background */
-    color: #ef4444 !important; /* Red icon color */
+    background: rgba(239, 68, 68, 0.12) !important;
+    /* Red background */
+    color: #ef4444 !important;
+    /* Red icon color */
     border-radius: 50%;
     display: flex;
     align-items: center;

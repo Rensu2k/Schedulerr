@@ -19,6 +19,7 @@ const searchInput = document.getElementById('search-input');
 const filterTimeDropdown = document.getElementById('filter-time-dropdown');
 const statusChips = document.querySelectorAll('#status-filters .chip');
 const selectedDayOption = document.getElementById('selected-day-option');
+const monthFilterDropdown = document.getElementById('month-filter');
 let activeStatusFilter = 'all';
 let countdownInterval = null;
 
@@ -78,6 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    if (monthFilterDropdown) {
+        monthFilterDropdown.addEventListener('change', () => {
+            renderEventList();
+        });
+    }
+
     const dateEls = ['event-date', 'event-end-date', 'edit-event-date', 'edit-event-end-date'];
     dateEls.forEach(id => {
         const el = document.getElementById(id);
@@ -101,6 +108,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAddSchedule = document.getElementById('btn-add-schedule');
     if (btnAddSchedule) {
         btnAddSchedule.addEventListener('click', () => openModal('add'));
+    }
+
+    // Profile Dropdown Logic
+    const profileBtn = document.getElementById('profile-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+
+    if (profileBtn && profileDropdown) {
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
     }
 
     // Close sidebar on outside click
@@ -135,8 +159,19 @@ function getDaysUntil(fromDate, toDate) {
     start.setHours(0, 0, 0, 0);
     const target = new Date(toDate);
     target.setHours(0, 0, 0, 0);
-    const diffTime = target - start;
-    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (target <= start) return 0;
+
+    let count = 0;
+    let current = new Date(start);
+    while (current < target) {
+        current.setDate(current.getDate() + 1);
+        const day = current.getDay();
+        if (day !== 0 && day !== 6) { // 0 = Sunday, 6 = Saturday
+            count++;
+        }
+    }
+    return count;
 }
 
 async function fetchEvents() {
@@ -174,14 +209,14 @@ function getColorByDate(dateStr, status, endDateStr) {
     now.setHours(0, 0, 0, 0);
     const start = new Date(dateStr + 'T00:00:00');
     const end = endDateStr ? new Date(endDateStr + 'T00:00:00') : start;
-    const diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+    const daysUntil = getDaysUntil(now, start);
 
     if (status === 'completed') return '#64748b'; // Gray for finished
     if (now >= start && now <= end && status === 'upcoming') return '#3b82f6'; // Blue for ongoing
     
-    if (diffDays >= 7) return '#22c55e'; // Green
-    if (diffDays >= 5) return '#eab308'; // Yellow
-    if (diffDays <= 4) return '#ef4444'; // Red
+    if (daysUntil > 6) return '#22c55e'; // Green (More than 6 work days)
+    if (daysUntil >= 4) return '#eab308'; // Yellow/Orange (4, 5, or 6 days)
+    if (daysUntil <= 3) return '#ef4444'; // Red (Less than 4 days)
     return '#22c55e';
 }
 
@@ -287,9 +322,24 @@ function renderCalendar() {
                         const card = document.createElement('div');
                         card.className = 'glass';
                         card.style.cssText = 'padding: 20px; border-radius: var(--border-radius-md); box-shadow: var(--box-shadow); cursor: pointer; text-align: left;';
-                        let dotClass = 'status-upcoming';
-                        if (e.status === 'completed') dotClass = 'status-completed';
-                        if (e.status === 'cancelled') dotClass = 'status-cancelled';
+                        
+                        const dotClass = 
+                            e.status === 'completed' ? 'status-completed' :
+                            e.status === 'cancelled' ? 'status-cancelled' : 'status-upcoming';
+
+                        // Multi-day date display
+                        const startObj = new Date(e.date + 'T00:00:00');
+                        const endObj = e.end_date ? new Date(e.end_date + 'T00:00:00') : startObj;
+                        const isMultiDay = e.end_date && e.end_date !== e.date;
+                        
+                        let dateDisplay = formatTimeToAmer(e.time);
+                        if (isMultiDay) {
+                            const mNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                            const startStr = `${mNamesShort[startObj.getMonth()]} ${startObj.getDate()}`;
+                            const endStr = `${mNamesShort[endObj.getMonth()]} ${endObj.getDate()}`;
+                            dateDisplay = `${startStr} - ${endStr} | ${dateDisplay}`;
+                        }
+
                         card.innerHTML = `
                             <h3 style="font-size: 24px; font-weight: 700; color: var(--primary-blue); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: flex; align-items: center; gap: 8px;">
                                 <div class="status-dot ${dotClass}"></div>
@@ -297,7 +347,7 @@ function renderCalendar() {
                             </h3>
                             <div style="color: var(--text-muted); font-size: var(--font-size-base); display: flex; align-items: center; gap: 5px;">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                ${formatTimeToAmer(e.time)}
+                                ${dateDisplay}
                             </div>
                         `;
                         card.onclick = () => { closeModal('day-events-modal'); openViewModal(e.id); };
@@ -495,9 +545,10 @@ function updateNextMeeting() {
 
 function generateTimeOptions() {
     timeSelect.innerHTML = '';
-    // Restrict from 8:00 AM to 6:00 PM to keep dropdown shorter
-    for (let i = 8; i <= 18; i++) {
+    // Restrict from 8:00 AM to 8:00 PM to keep dropdown shorter
+    for (let i = 8; i <= 20; i++) {
         for (let m of ['00', '30']) {
+            if (i === 20 && m === '30') continue;
             const val = `${String(i).padStart(2, '0')}:${m}`;
             const opt = document.createElement('option');
             opt.value = val;
@@ -561,6 +612,7 @@ function renderEventList() {
 
     const term = searchInput.value.toLowerCase();
     const filterTime = filterTimeDropdown ? filterTimeDropdown.value : 'all';
+    const selectedMonth = monthFilterDropdown ? monthFilterDropdown.value : 'all';
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -570,6 +622,22 @@ function renderEventList() {
         
         // If there is a search term, ignore other filters
         if (term) return matchesSearch;
+
+        // Month filter (Always applies if no search term)
+        if (selectedMonth !== 'all') {
+            const start = new Date(e.date + 'T00:00:00');
+            const end = e.end_date ? new Date(e.end_date + 'T00:00:00') : start;
+            const targetMonthInt = parseInt(selectedMonth, 10);
+            
+            const eventMonths = [];
+            let current = new Date(start);
+            while (current <= end) {
+                eventMonths.push(current.getMonth());
+                current.setMonth(current.getMonth() + 1);
+                current.setDate(1); // Jump to first of next month to avoid skipping
+            }
+            if (!eventMonths.includes(targetMonthInt)) return false;
+        }
 
         if (!matchesSearch) return false;
 
@@ -666,6 +734,7 @@ function renderEventList() {
         const evtStart = new Date(`${e.date}T00:00:00`);
         const evtEnd = e.end_date ? new Date(`${e.end_date}T00:00:00`) : evtStart;
         const isOngoing = todayDate >= evtStart && todayDate <= evtEnd && e.status === 'upcoming';
+        const isActuallyToday = todayDate.getTime() === evtStart.getTime();
 
         if (e.status === 'completed') {
             pillClass = 'pill-completed';
@@ -681,7 +750,12 @@ function renderEventList() {
 
         // Days left counter
         const daysUntil = getDaysUntil(todayDate, evtStart);
-        const daysLeftLabel = (isOngoing || daysUntil <= 0) ? 'Today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'} left`;
+        let daysLeftLabel = (isOngoing || isActuallyToday) ? 'Today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'} left`;
+        
+        // Hide days left for finished or cancelled
+        if (e.status === 'completed' || e.status === 'cancelled') {
+            daysLeftLabel = '';
+        }
 
         row.innerHTML = `
             <div class="status-line ${statusColorClass}"></div>

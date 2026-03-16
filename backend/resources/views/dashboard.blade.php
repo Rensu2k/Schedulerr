@@ -239,9 +239,9 @@
             <div class="sidebar-content">
                 <div class="legend-section">
                     <h4>LEGEND:</h4>
-                    <div class="legend-item"><span class="legend-color red"></span> 3 days before the schedule</div>
-                    <div class="legend-item"><span class="legend-color yellow"></span> 5 days before the schedule</div>
-                    <div class="legend-item"><span class="legend-color green"></span> 1 week before the schedule</div>
+                    <div class="legend-item"><span class="legend-color red"></span> 1-3 days before the schedule</div>
+                    <div class="legend-item"><span class="legend-color yellow"></span> 4-6 days before the schedule</div>
+                    <div class="legend-item"><span class="legend-color green"></span> more than 6 days before the schedule</div>
                     <div class="legend-item"><span class="legend-color blue"></span> Ongoing schedule</div>
                     <div class="legend-item"><span class="legend-color gray"></span> Finished schedule</div>
                 </div>
@@ -255,6 +255,22 @@
                         <div class="chip active" data-status="upcoming">Upcoming</div>
                         <div class="chip" data-status="completed">Finished</div>
                         <div class="chip" data-status="cancelled">Cancelled</div>
+                        
+                        <select id="month-filter" class="sidebar-month-filter">
+                            <option value="all">All Months</option>
+                            <option value="0">January</option>
+                            <option value="1">February</option>
+                            <option value="2">March</option>
+                            <option value="3">April</option>
+                            <option value="4">May</option>
+                            <option value="5">June</option>
+                            <option value="6">July</option>
+                            <option value="7">August</option>
+                            <option value="8">September</option>
+                            <option value="9">October</option>
+                            <option value="10">November</option>
+                            <option value="11">December</option>
+                        </select>
                     </div>
                 </div>
 
@@ -264,16 +280,6 @@
                 <div class="agenda-scroll-container sidebar-list" id="event-list-container">
                     <!-- Event rows injected via JS -->
                 </div>
-            </div>
-
-            <div class="sidebar-footer">
-                <form action="{{ route('logout') }}" method="POST" style="display: flex; justify-content: center; width: 100%;">
-                    @csrf
-                    <button type="submit" class="logout-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                        <span>Logout</span>
-                    </button>
-                </form>
             </div>
         </aside>
 
@@ -285,7 +291,25 @@
                     </button>
                     <h1>Schedule Management System</h1>
                 </div>
-                <button class="btn btn-primary" id="btn-add-schedule">+ Add New Schedule</button>
+                
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <button class="btn btn-primary" id="btn-add-schedule">+ Add New Schedule</button>
+                    
+                    <div class="profile-container">
+                        <button class="profile-btn" id="profile-btn">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </button>
+                        <div class="profile-dropdown" id="profile-dropdown">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-logout-btn">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </header>
 
             <section class="calendar-center-wrapper">
