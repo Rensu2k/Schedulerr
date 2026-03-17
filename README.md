@@ -1,79 +1,78 @@
-# Schedule Management System
+# Meeting Management App
 
-A Laravel-based meeting and schedule management application with calendar view, event CRUD, export, and admin features.
+A modern, Laravel-powered meeting and schedule management application, built for the desktop using [NativePHP](https://nativephp.com/).
+
+## Features
+
+- **Calendar Dashboard**: Visual overview of all your meetings and events.
+- **Event Management**: Easily create, edit, and delete events with a intuitive interface.
+- **Recurring Events**: Support for daily, weekly, and monthly repetitions.
+- **Attachments**: Attach relevant documents to your events.
+- **Data Export**:
+    - **CSV Summary**: Export your event logs for any month or year.
+    - **iCal Feed**: Sync your events with external calendars via `/api/events/ical`.
+- **System Tray Integration**: Quick access and notifications via NativePHP.
+- **Profile Management**: Customize your user profile and manage security.
 
 ## Requirements
 
-- PHP 8.2+
-- Composer
-- Node.js & npm
-- MySQL/SQLite/PostgreSQL
+- **PHP 8.2+**
+- **Composer**
+- **Node.js & npm**
+- **SQLite** (Default database for NativePHP)
 
-## Setup
+## Getting Started
 
-1. **Clone and install dependencies**
+1. **Clone the repository**
 
+2. **Install dependencies**
     ```bash
     composer install
     npm install
     ```
 
-2. **Environment**
-
+3. **Environment Setup**
     ```bash
     cp .env.example .env
     php artisan key:generate
     ```
 
-3. **Database**
-    - Configure `DB_*` in `.env`
-
+4. **Initialize Database**
     ```bash
     php artisan migrate
     php artisan db:seed
     ```
 
-4. **Storage link**
-
+5. **Symlink Storage**
     ```bash
     php artisan storage:link
     ```
 
-5. **Build assets**
+## Development
 
-    ```bash
-    npm run build
-    ```
-
-6. **Run**
-    ```bash
-    php artisan serve
-    ```
-    Visit http://localhost:8000
-
-## Scheduler (Email Reminders)
-
-For daily event reminders at 8:00 AM, add to crontab:
+To run the application in a desktop window with hot-reloading:
 
 ```bash
-* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
+php artisan native:serve
 ```
 
-Configure mail in `.env` (SMTP, etc.) for reminders to work.
+For frontend asset bundling during development:
+```bash
+npm run dev
+```
 
-## Features
+## Production Build
 
-- Login / session auth
-- Calendar dashboard with event management
-- Recurring events (daily, weekly, monthly)
-- Event attachments
-- Excel export (Create Summary)
-- iCal export (`/api/events/ical`)
-- Email reminders (scheduled)
-- Admin dashboard (admin users only)
-- User management (admin)
-- Audit trail for event changes
+To package the application for distribution:
 
-## Default Admin
+```bash
+php artisan native:build
+```
 
-After seeding: `admin@example.com` / `admin123`
+## Technologies Used
+
+- **Framework**: [Laravel 12+](https://laravel.com)
+- **Desktop Runtime**: [NativePHP Electron](https://nativephp.com)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com)
+- **Build Tool**: [Vite](https://vitejs.dev)
+- **Database**: SQLite
