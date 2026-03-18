@@ -13,10 +13,11 @@
 
     --border-radius-lg: 20px;
     --border-radius-md: 14px;
-    --box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --box-shadow:
+        0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
 
     --font-size-sm: 14px;
-    --font-size-base: 16px; 
+    --font-size-base: 16px;
     --font-size-lg: 18px;
     --font-size-xl: 24px;
     --font-size-xxl: 32px;
@@ -26,7 +27,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Outfit', 'Inter', sans-serif;
+    font-family: "Outfit", "Inter", sans-serif;
 }
 
 body {
@@ -37,7 +38,6 @@ body {
     width: 100vw;
     overflow: hidden;
 }
-
 
 .header-left h1 {
     font-size: 24px;
@@ -62,8 +62,6 @@ body {
     background: rgba(37, 99, 235, 0.05);
 }
 
-
-
 /* Utilities */
 .glass {
     background: rgba(255, 255, 255, 0.65);
@@ -87,7 +85,11 @@ body {
 }
 
 .btn {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary-blue) 0%,
+        var(--secondary-blue) 100%
+    );
     color: white;
     border: none;
     padding: 12px 24px;
@@ -237,7 +239,7 @@ body {
 }
 
 .finished-day::after {
-    content: '✓';
+    content: "✓";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -277,7 +279,7 @@ body {
 }
 
 .calendar-day.past-no-finish::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -285,7 +287,7 @@ body {
     pointer-events: none;
 }
 
-.calendar-day.past-no-finish>* {
+.calendar-day.past-no-finish > * {
     position: relative;
     z-index: 1;
 }
@@ -520,7 +522,6 @@ body {
     box-shadow: none;
 }
 
-
 .close-sidebar {
     background: transparent;
     border: none;
@@ -557,7 +558,11 @@ body {
 .sidebar-main {
     width: 380px;
     height: 100vh;
-    background: linear-gradient(180deg, rgba(238, 242, 255, 0.8) 0%, rgba(224, 231, 255, 0.8) 100%);
+    background: linear-gradient(
+        180deg,
+        rgba(238, 242, 255, 0.8) 0%,
+        rgba(224, 231, 255, 0.8) 100%
+    );
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
@@ -685,7 +690,6 @@ body {
     flex-direction: column;
     min-height: 0;
 }
-
 
 .calendar-weekdays {
     display: grid;
@@ -955,7 +959,6 @@ select#edit-event-time {
 .sidebar-footer {
     display: none; /* Hidden as per move to header */
 }
-
 
 .dashboard-wrapper {
     display: none;
